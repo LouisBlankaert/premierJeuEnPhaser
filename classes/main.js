@@ -41,6 +41,8 @@ let bombs; // initialise les bombes
 let gameOverText; // initialise le gameovertext
 let restartButton; // initialise le restart bouton
 let gameOver = false // initialise le game over
+let jumpCount = 0
+let canJump = true
 
 function create ()
 {
@@ -180,6 +182,7 @@ function restartGame() {
     restartButton.setVisible(false); // Masque le bouton de redémarrage
     // Réinitialise le score à 0
     score = 0;
+    jumpCount = 0
 }
 
 
@@ -187,6 +190,7 @@ function restartGame() {
 // pour gerer les mouvements dans le jeu
 function update ()
 {
+    // Gérer les mouvements gauche et droite
     if (cursors.left.isDown) {
         player.setVelocityX(-160);
         player.anims.play('left', true);
@@ -198,7 +202,28 @@ function update ()
         player.anims.play('turn');
     }
 
-    if (cursors.up.isDown && player.body.touching.down) {
-        player.setVelocityY(-500);
+   // Réinitialiser le compteur de sauts lorsque le joueur touche le sol
+   if (player.body.touching.down) {
+    jumpCount = 0;
+    canJump = true; // Permet au joueur de sauter à nouveau
+    }
+
+    if (cursors.up.isDown && canJump) { // Premier 'if': Vérifie si la touche de saut est enfoncée et si le saut est possible
+        if (player.body.touching.down || jumpCount < 2) { // Deuxième 'if': Vérifie si le joueur est au sol ou si le double saut est autorisé
+            player.setVelocityY(-350); // Applique une vitesse verticale pour faire sauter le joueur
+            jumpCount++; // Incrémente le compteur de sauts
+            canJump = false; // Empêche les sauts répétés tant que la touche est enfoncée
+            console.log(jumpCount);
+        }
+    }
+
+    // Réinitialiser la capacité à sauter lorsque la touche de saut est relâchée
+    if (cursors.up.isUp) {
+        canJump = true;
+    }
+
+    // Gérer la descente rapide
+    if (cursors.down.isDown) {
+        player.setVelocityY(350); // Accélère la descente du joueur
     }
 }
