@@ -184,7 +184,7 @@ function restartGame() {
 
 
 
-
+// pour gerer les mouvements dans le jeu
 function update ()
 {
     if (cursors.left.isDown) {
